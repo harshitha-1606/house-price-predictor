@@ -1,66 +1,114 @@
 import streamlit as st
 import pandas as pd
-from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 
-# Title
-st.title("🏠 Smart House Price Predictor")
+# --------------------------
+# 📊 Location Data (Realistic Approx)
+# --------------------------
 
-st.write("Enter details below:")
+TELANGANA = {
+    "Hyderabad": {"price": 9000, "growth": 0.10},
+    "Rangareddy": {"price": 8500, "growth": 0.09},
+    "Medchal": {"price": 8000, "growth": 0.09},
+    "Warangal": {"price": 5500, "growth": 0.07},
+    "Karimnagar": {"price": 5000, "growth": 0.06},
+    "Khammam": {"price": 5200, "growth": 0.06},
+    "Nizamabad": {"price": 4800, "growth": 0.05}
+}
 
-# Inputs
-rooms = st.slider("Number of Rooms", 1, 10, 3)
+ANDHRA = {
+    "Visakhapatnam": {"price": 8000, "growth": 0.09},
+    "Vijayawada": {"price": 7000, "growth": 0.08},
+    "Guntur": {"price": 6200, "growth": 0.07},
+    "Tirupati": {"price": 6500, "growth": 0.08},
+    "Kakinada": {"price": 5200, "growth": 0.06},
+    "Rajahmundry": {"price": 5500, "growth": 0.06},
+    "Nellore": {"price": 5600, "growth": 0.07},
+    "Kurnool": {"price": 4800, "growth": 0.05}
+}
+
+# --------------------------
+# 🎯 Title
+# --------------------------
+
+st.title("🏡 Smart House Investment Predictor")
+
+st.write("Predict house price, future growth & investment potential 📈")
+
+# --------------------------
+# 📥 Inputs
+# --------------------------
+
+state = st.selectbox("Select State", ["Telangana", "Andhra Pradesh"])
+
+if state == "Telangana":
+    district = st.selectbox("Select District", list(TELANGANA.keys()))
+    data = TELANGANA[district]
+else:
+    district = st.selectbox("Select District", list(ANDHRA.keys()))
+    data = ANDHRA[district]
+
 house_type = st.selectbox("House Type", ["Apartment", "Villa"])
 
-# Load dataset
-url = "https://raw.githubusercontent.com/selva86/datasets/master/BostonHousing.csv"
-df = pd.read_csv(url)
+rooms = st.slider("Number of Rooms", 1, 10, 3)
+area = st.number_input("Area (sq ft)", min_value=500, max_value=5000, value=1200)
 
-X = df.drop("medv", axis=1)
-y = df["medv"]
+# --------------------------
+# 💰 Price Calculation
+# --------------------------
 
-# Train model
-model = LinearRegression()
-model.fit(X, y)
+base_price = data["price"]
+growth_rate = data["growth"]
 
-# Backend logic
-crim = 0.1
-zn = 0
-indus = 10
-chas = 1 if house_type == "Villa" else 0
-nox = 0.5
-age = 60
-dis = 4
-rad = 4
-tax = 300
-ptratio = 15
-b = 390
-lstat = 10
+# Adjustments
+type_factor = 1.2 if house_type == "Villa" else 1.0
+room_factor = 1 + (rooms * 0.05)
 
-if st.button("Predict Price"):
+# Current price
+current_price = area * base_price * type_factor * room_factor
 
-    user_data = pd.DataFrame([[crim, zn, indus, chas, nox, rooms, age, dis, rad, tax, ptratio, b, lstat]],
-                             columns=X.columns)
+# 5-year future price
+future_price = current_price * ((1 + growth_rate) ** 5)
 
-    prediction = model.predict(user_data)[0]
+# ROI
+roi = ((future_price - current_price) / current_price) * 100
 
-    # Broker price
-    broker_price = prediction * 1.15
+# Investment score
+if roi > 60:
+    score = "🔥 Excellent Investment"
+elif roi > 40:
+    score = "👍 Good Investment"
+else:
+    score = "⚠️ Moderate Investment"
 
-    # Adjusted price
-    adjusted_price = prediction * (1.1 if house_type == "Villa" else 0.95)
+# --------------------------
+# 📊 Output
+# --------------------------
 
-    st.subheader("Results")
-    st.write(f"💰 Actual Price: {prediction:.2f}")
-    st.write(f"🏢 Broker Price: {broker_price:.2f}")
-    st.write(f"🌍 Adjusted Price: {adjusted_price:.2f}")
+if st.button("Predict Investment"):
 
-    # Graph
-    labels = ["Actual", "Broker", "Adjusted"]
-    values = [prediction, broker_price, adjusted_price]
+    st.subheader("📊 Results")
+
+    st.write(f"📍 Location: {district}, {state}")
+    st.write(f"🏠 Type: {house_type}")
+
+    st.success(f"💰 Current Price: ₹ {current_price:,.0f}")
+    st.info(f"📈 5-Year Future Price: ₹ {future_price:,.0f}")
+    st.warning(f"📊 ROI: {roi:.2f}%")
+
+    st.write(f"🏆 Investment Rating: {score}")
+
+    # --------------------------
+    # 📉 Graph
+    # --------------------------
+
+    years = [0, 1, 2, 3, 4, 5]
+    prices = [current_price * ((1 + growth_rate) ** i) for i in years]
 
     fig, ax = plt.subplots()
-    ax.bar(labels, values)
-    ax.set_title("Price Comparison")
+    ax.plot(years, prices, marker='o')
+    ax.set_title("📈 Price Growth Over 5 Years")
+    ax.set_xlabel("Years")
+    ax.set_ylabel("Price (₹)")
 
-    st.pyplot(fig) 
+    st.pyplot(fig)

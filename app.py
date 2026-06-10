@@ -1,9 +1,19 @@
 import streamlit as st
-import pandas as pd
 import matplotlib.pyplot as plt
 
 # --------------------------
-# 📊 Location Data (Realistic Approx)
+# PAGE SETTINGS
+# --------------------------
+st.set_page_config(page_title="Smart House Investment Predictor", layout="wide")
+
+# --------------------------
+# TITLE
+# --------------------------
+st.title("🏡 Smart House Investment Predictor")
+st.write("Predict house price, future growth & investment potential 📊")
+
+# --------------------------
+# LOCATION DATA
 # --------------------------
 
 TELANGANA = {
@@ -28,64 +38,60 @@ ANDHRA = {
 }
 
 # --------------------------
-# 🎯 Title
+# INPUT SECTION (2-COLUMN UI)
 # --------------------------
 
-st.title("🏡 Smart House Investment Predictor")
+col1, col2 = st.columns(2)
 
-st.write("Predict house price, future growth & investment potential 📈")
+with col1:
+    state = st.selectbox("Select State", ["Telangana", "Andhra Pradesh"])
 
-# --------------------------
-# 📥 Inputs
-# --------------------------
+    if state == "Telangana":
+        district = st.selectbox("Select District", list(TELANGANA.keys()))
+        data = TELANGANA[district]
+    else:
+        district = st.selectbox("Select District", list(ANDHRA.keys()))
+        data = ANDHRA[district]
 
-state = st.selectbox("Select State", ["Telangana", "Andhra Pradesh"])
+    house_type = st.selectbox("House Type", ["Apartment", "Villa"])
 
-if state == "Telangana":
-    district = st.selectbox("Select District", list(TELANGANA.keys()))
-    data = TELANGANA[district]
-else:
-    district = st.selectbox("Select District", list(ANDHRA.keys()))
-    data = ANDHRA[district]
-
-house_type = st.selectbox("House Type", ["Apartment", "Villa"])
-
-rooms = st.slider("Number of Rooms", 1, 10, 3)
-area = st.number_input("Area (sq ft)", min_value=500, max_value=5000, value=1200)
+with col2:
+    rooms = st.slider("Number of Rooms", 1, 10, 3)
+    area = st.number_input("Area (sq ft)", 500, 5000, 1200)
 
 # --------------------------
-# 💰 Price Calculation
+# PREDICTION BUTTON
 # --------------------------
 
-base_price = data["price"]
-growth_rate = data["growth"]
+if st.button("🚀 Predict Investment"):
 
-# Adjustments
-type_factor = 1.2 if house_type == "Villa" else 1.0
-room_factor = 1 + (rooms * 0.05)
+    st.markdown("---")
 
-# Current price
-current_price = area * base_price * type_factor * room_factor
+    # --------------------------
+    # CALCULATIONS
+    # --------------------------
 
-# 5-year future price
-future_price = current_price * ((1 + growth_rate) ** 5)
+    base_price = data["price"]
+    growth_rate = data["growth"]
 
-# ROI
-roi = ((future_price - current_price) / current_price) * 100
+    type_factor = 1.2 if house_type == "Villa" else 1.0
+    room_factor = 1 + (rooms * 0.05)
 
-# Investment score
-if roi > 60:
-    score = "🔥 Excellent Investment"
-elif roi > 40:
-    score = "👍 Good Investment"
-else:
-    score = "⚠️ Moderate Investment"
+    current_price = area * base_price * type_factor * room_factor
+    future_price = current_price * ((1 + growth_rate) ** 5)
+    roi = ((future_price - current_price) / current_price) * 100
 
-# --------------------------
-# 📊 Output
-# --------------------------
+    # Investment Rating
+    if roi > 60:
+        score = "🔥 Excellent Investment"
+    elif roi > 40:
+        score = "👍 Good Investment"
+    else:
+        score = "⚠️ Moderate Investment"
 
-if st.button("Predict Investment"):
+    # --------------------------
+    # RESULTS
+    # --------------------------
 
     st.subheader("📊 Results")
 
@@ -99,7 +105,7 @@ if st.button("Predict Investment"):
     st.write(f"🏆 Investment Rating: {score}")
 
     # --------------------------
-    # 📉 Graph
+    # GRAPH
     # --------------------------
 
     years = [0, 1, 2, 3, 4, 5]

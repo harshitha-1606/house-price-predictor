@@ -13,10 +13,12 @@ This project is a Machine Learning-based application that predicts house prices 
 
 ## 🧠 Machine Learning Approach
 - Algorithm: Linear Regression
-- Dataset: Boston Housing Dataset
+- Dataset: - Model trained using structured housing data features
+- Features include rooms, location factors, and environmental indicators
+- Linear Regression used for price prediction
 - Data preprocessing and feature selection performed
 - Model trained and evaluated using test data
-
+- Designed a simplified real-world pricing system incorporating broker influence and environmental adjustments
 ## 📊 Visualization
 - Scatter plot for Actual vs Predicted prices
 - Bar chart for price comparison
@@ -24,9 +26,9 @@ This project is a Machine Learning-based application that predicts house prices 
 ## 🛠️ Technologies Used
 - Python
 - Pandas
-- Scikit-learn
-- Matplotlib
-- Streamlit
+- Scikit-learn (Linear Regression)
+- Matplotlib (visualization)
+- Streamlit (web interface)
 
 ## 🎯 Use Case
 Helps users estimate fair housing prices and understand how brokers may influence pricing.

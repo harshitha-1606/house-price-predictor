@@ -1,0 +1,37 @@
+# 🏠 Smart House Price Prediction System
+
+This project is a Machine Learning-based application that predicts house prices using various features and provides a comparison between actual predicted price and broker-influenced pricing.
+
+## 🚀 Features
+- Predict house prices using Linear Regression
+- Simplified user input (rooms & house type)
+- Comparison of:
+  - Actual Price
+  - Broker Price (inflated estimate)
+  - Adjusted Price (based on surroundings)
+- Data visualization using graphs
+
+## 🧠 Machine Learning Approach
+- Algorithm: Linear Regression
+- Dataset: Boston Housing Dataset
+- Data preprocessing and feature selection performed
+- Model trained and evaluated using test data
+
+## 📊 Visualization
+- Scatter plot for Actual vs Predicted prices
+- Bar chart for price comparison
+
+## 🛠️ Technologies Used
+- Python
+- Pandas
+- Scikit-learn
+- Matplotlib
+- Streamlit
+
+## 🎯 Use Case
+Helps users estimate fair housing prices and understand how brokers may influence pricing.
+
+## 📌 Future Improvements
+- Location-based predictions
+- Real-time data integration
+- Advanced ML models
